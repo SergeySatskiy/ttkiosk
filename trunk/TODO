@@ -1,0 +1,3 @@
+- e-mail error report is better done asynchronously
+- show QT message box in the unhadled exception hook
+- getExceptionInfo() does not work at exceptionHook()
