@@ -22,7 +22,9 @@
 
 """ utility functions """
 
-import sys, os, os.path, tempfile, ConfigParser
+import sys, os, time, getpass, os.path, tempfile, ConfigParser
+import socket, fcntl, struct
+
 from subprocess import Popen, PIPE
 from traceback import format_tb
 
@@ -31,6 +33,23 @@ from traceback import format_tb
 # Configuration files in the order of search
 configFile = [ "/ttkiosk/etc/ttkiosk.ini", "/etc/ttkiosk/ttkiosk.ini",
                "~/ttkiosk.ini" ]
+
+debug = False
+
+
+def debugMsg( message ):
+    """ Writes a message to a debug file """
+
+    # Debug message file is always here
+    fileName = '/var/log/ttkiosk.debug'
+    try:
+        f = open( fileName, "a+" )
+        f.write( time.ctime( time.time() ) + ' ' + message + '\n' )
+        f.close()
+    except:
+        pass
+
+    return
 
 
 def safeRun( commandArgs ):
@@ -75,7 +94,7 @@ def getExceptionInfo():
     except:
         tracebackInfoMsg = "No traceback information available"
 
-    return "Exception is cought. " + msg + "\n" + tracebackInfoMsg
+    return "Exception is caught. " + msg + "\n" + tracebackInfoMsg
 
 
 def getExceptionMessage():
@@ -92,6 +111,22 @@ def getExceptionMessage():
     return msg
 
 
+def getConfigFileName():
+    """ Returns the settings file name """
+
+    configFileName = ""
+    for name in configFile:
+        if "~" in name:
+            name = name.replace( "~", os.environ["HOME"] )
+        if os.path.exists( name ):
+            configFileName = name
+            break
+    if configFileName == "":
+        raise Exception( "Config file is not found. Checked: " + \
+                         " ".join( configFile ) )
+    return configFileName
+
+
 class Settings( object ):
     """
     Read only singleton settings
@@ -104,18 +139,8 @@ class Settings( object ):
         """ Provides settings singleton facility """
 
         def __init__( self ):
-            # Settings members
-            configFileName = ""
-            for name in configFile:
-                if "~" in name:
-                    name = name.replace( "~", os.environ["HOME"] )
-                if os.path.exists( name ):
-                    configFileName = name
-                    break
-            if configFileName == "":
-                raise Exception( "Config file is not found. Checked: " + \
-                                 " ".join( configFile ) )
-
+            configFileName = getConfigFileName()
+            debugMsg( "Configuration file: " + configFileName )
 
             # Read the settings
             config = ConfigParser.ConfigParser()
@@ -133,6 +158,13 @@ class Settings( object ):
                                                           "from" )
             self.mailErrorRecipient = get_string( config, "mail",
                                                           "errorRecipient" )
+            debugMsg( "[mail]" )
+            debugMsg( "smtpUser: " + self.mailSmtpUser )
+            debugMsg( "smtpPassword: " + self.mailSmtpPassword )
+            debugMsg( "smtpServer: " + self.mailSmtpServer )
+            debugMsg( "smtpPort: " + self.mailSmtpPort )
+            debugMsg( "from: " + self.mailFrom )
+            debugMsg( "errorRecipient: " + self.mailErrorRecipient )
 
             path = get_string( config, "path", "logs" )
             self.pathLogs = normalizeDir( "Logs", path )
@@ -146,12 +178,19 @@ class Settings( object ):
             path = get_string( config, "path", "templates" )
             self.pathTemplates = normalizeDir( "Templates", path )
 
+            debugMsg( "[path]" )
+            debugMsg( "logs: " + self.pathLogs )
+            debugMsg( "videos: " + self.pathVideos )
+            debugMsg( "slides: " + self.pathSlides )
+            debugMsg( "templates: " + self.pathTemplates )
 
             # Build the skin path
             self.generalSkin = get_string( config, "general", "skin" )
+            debugMsg( "skin: " + self.generalSkin )
 
             path = get_string( config, "path", "skins" )
             pathSkins = normalizeDir( "Skins", path )
+            debugMsg( "skins: " + pathSkins )
 
             self.pathSkin = pathSkins + self.generalSkin
             if not self.pathSkin.endswith( '/' ):
@@ -160,11 +199,14 @@ class Settings( object ):
                 raise Exception( "The '" + self.generalSkin + \
                                  "' skin directory (" + \
                                  self.pathSkin + ") has not been found" )
+            debugMsg( "skin path: " + self.pathSkin )
 
             # Check timeout
             self.timeoutIdle = int( get_string( config, "timeout", "idle" ) )
             if self.timeoutIdle < 0:
                 raise Exception( "Idle timeout has to be >= 0. 0 means never." )
+            debugMsg( "idle timeout: " + str( self.timeoutIdle ) )
+            debugMsg( "Configuration has been read" )
 
             config = None
             return
@@ -232,10 +274,107 @@ def resolveSymbolicLink( path ):
     return resolutionPath, currentPath
 
 
-
 def splitThousands( value, sep="'"):
     """ provides thousands separated value """
     if len( value ) <= 3:
         return value
     return splitThousands( value[:-3], sep) + sep + value[-3:]
+
+
+def getIPAddress( ifname ):
+    """ Provides the given interface IP address """
+
+    soc = socket.socket( socket.AF_INET, socket.SOCK_DGRAM )
+    return socket.inet_ntoa( fcntl.ioctl( soc.fileno(),
+                                          0x8915,  # SIOCGIFADDR
+                                          struct.pack( '256s', ifname[:15] )
+                                        )[20:24]
+                           )
+
+
+def getInterfaceAddresses():
+    """ Tries to get IP addresses of some interfaces """
+
+    addresses = []
+    ifaces = [ 'eth0', 'eth1', 'wlan0', 'wlan1' ]
+    for iface in ifaces:
+        try:
+            addresses.append( iface + ": " + getIPAddress( iface ) )
+        except:
+            pass
+    return addresses
+
+
+def getStrippedSettingsFileContent():
+    """ Returns the settings file content without remarks and empty lines """
+
+    content = ""
+    try:
+        fileName = getConfigFileName()
+        f = open( fileName, "r" )
+        for line in f:
+            line = line.strip()
+            if line != "" and not line.startswith( '#' ):
+                if len( content ) > 0:
+                    content += "\n"
+                content += line
+        f.close()
+    except:
+        pass
+    return content
+
+
+def collectHostInfo():
+    """ Returns a string with the whole host info """
+
+    ifaces = getInterfaceAddresses()
+    iniFileContent = getStrippedSettingsFileContent()
+
+    hostInfo = "Date: " + time.ctime( time.time() ) + "\n" \
+               "---------------------------------------\n" \
+               "Python version: " + sys.version + "\n" \
+               "OS version: " + "; ".join( os.uname() ) + "\n" \
+               "User: " + getpass.getuser() + \
+                          " (" + str( os.getuid() ) + ")\n" \
+               "Current directory: " + os.getcwd() + "\n"
+
+    for iface in ifaces:
+        hostInfo += iface + "\n"
+
+    hostInfo += "---------------------------------------\n"
+
+    if len( iniFileContent ) > 0:
+        hostInfo += "Configuration file content:\n" + iniFileContent + "\n" \
+                    "---------------------------------------\n"
+
+    hostInfo += "Environment variables:\n"
+    for param in os.environ.keys():
+        hostInfo += param + " = " + os.environ[param] + "\n"
+
+    return hostInfo
+
+
+def writeToLog( message ):
+    """ Writes the given message to the log file """
+
+    if not message.endswith( '\n' ):
+        message += '\n'
+
+    try:
+        settings = Settings()
+        logFileName = settings.pathLogs + "ttkiosk.log"
+        f = open( logFileName, "a" )
+        if message.count( '\n' ) == 1:
+            # Single line message
+            f.write( time.ctime( time.time() ) + ": " + message )
+        else:
+            # Many lines message
+            timestamp = time.ctime( time.time() )
+            f.write( timestamp + " ------ begin ------\n" )
+            f.write( message )
+            f.write( timestamp + " ------ end ------\n" )
+        f.close()
+    except:
+        pass
+    return
 
