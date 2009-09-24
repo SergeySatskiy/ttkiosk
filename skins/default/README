@@ -1,0 +1,15 @@
+The directory holds a set of .css files.
+Each file holds a style sheet for a certain form.
+The name of a file must match a name of the form it is purposed for.
+A special file Application.css is purposed for the application level style
+sheet.
+
+The actual description must follow to what is supported by QT.
+There are a few additions though:
+- # started lines are considered as remarks. The '#' symbol must be at 0
+  position.
+- INCLUDE <path to a file> is supported. INCLUDE must start at 0 position
+
+The additions are processed first and then an assebled text is passed to a
+form or an application.
+

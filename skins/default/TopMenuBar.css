@@ -19,32 +19,9 @@
 #
 # $Id$
 #
+# Certain form style sheet file
+# It supports remarks, empty lines,
+# INCLUDE <path to another css file>
+#
 
-[mail]
-smtpUser     = "ttkiosk@gmail.com"
-smtpPassword = "zigfrid17th"
-smtpServer   = "smtp.gmail.com"
-
-# If smtpPort value is empty then a default port will be used
-smtpPort     = 587
-from         = "ttkiosk@gmail.com"
-
-# Many addresses can be given here. Use ',' to separate them
-# e.g. "peter@some.com, ken@other.net"
-errorRecipient = "sergey.satskiy@gmail.com"
-
-[path]
-logs      = "/ttkiosk/logs/"
-videos    = "/ttkiosk/videos/"
-slides    = "/ttkiosk/slides/"
-templates = "/ttkiosk/templates/"
-skins     = "/ttkiosk/skins/"
-
-
-[general]
-skin = "default"
-
-[timeout]
-# Timeout to idle in seconds
-idle = 60
 
