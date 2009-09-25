@@ -40,8 +40,11 @@ debug = False
 def debugMsg( message ):
     """ Writes a message to a debug file """
 
+    if not debug:
+        return
+
     # Debug message file is always here
-    fileName = '/var/log/ttkiosk.debug'
+    fileName = '/var/log/ttkiosk/ttkiosk.debug'
     try:
         f = open( fileName, "a+" )
         f.write( time.ctime( time.time() ) + ' ' + message + '\n' )
@@ -125,6 +128,32 @@ def getConfigFileName():
         raise Exception( "Config file is not found. Checked: " + \
                          " ".join( configFile ) )
     return configFileName
+
+
+class GlobalData( object ):
+    """ Global data singleton """
+    _iInstance = None
+    class Singleton:
+        """ Provides singleton facility """
+
+        def __init__( self ):
+            self.isAdmin = False
+            self.screenWidth = 0
+            self.screenHeight = 0
+            return
+
+    def __init__( self ):
+        if GlobalData._iInstance is None:
+            GlobalData._iInstance = GlobalData.Singleton()
+        self.__dict__[ '_GlobalData__iInstance' ] = GlobalData._iInstance
+        return
+
+    def __getattr__( self, aAttr ):
+        return getattr( self._iInstance, aAttr )
+
+    def __setattr__( self, aAttr, aValue ):
+        setattr( self._iInstance, aAttr, aValue )
+        return
 
 
 class Settings( object ):
