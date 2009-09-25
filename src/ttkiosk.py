@@ -33,9 +33,9 @@ from PyQt4 import QtGui
 from optparse import OptionParser
 
 # Make it possible to import from the ./ui directory
-sys.path.append( 'ui' )
-
+sys.path.append( os.path.dirname( os.path.abspath( sys.argv[0] ) ) + '/ui/' )
 import ui
+
 
 def ttkioskMain():
     """ The ttkiosk driver """
@@ -71,8 +71,12 @@ def ttkioskMain():
     # Now the default exception handler can be replaced
     # sys.excepthook = exceptionHook
 
+    globalData = utils.GlobalData()
     ttkioskApp = QtGui.QApplication( sys.argv )
+
     screenSize = ttkioskApp.desktop().screenGeometry()
+    globalData.screenWidth = screenSize.width()
+    globalData.screenHeight = screenSize.height()
 
     formsPath = os.path.dirname( os.path.abspath( sys.argv[0] ) ) + '/ui/' + \
                 str( screenSize.width() ) + 'x' + str( screenSize.height() ) + \
