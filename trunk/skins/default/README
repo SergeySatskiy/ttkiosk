@@ -1,4 +1,7 @@
 The directory holds a set of .css files.
+The .css files can be put in subdirectories
+Each .css file is considered as the one to be used so do not use the .css
+extention for the included files.
 Each file holds a style sheet for a certain form.
 The name of a file must match a name of the form it is purposed for.
 A special file Application.css is purposed for the application level style
