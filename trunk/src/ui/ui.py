@@ -24,7 +24,7 @@
 Functions that define a framework for ttkiosk forms
 """
 
-from utils import debugMsg, GlobalData
+from utils import debugMsg, GlobalData, writeToLog
 import os, os.path, sys
 
 
@@ -129,6 +129,7 @@ def applySingleLayout( path, startupForms, geometry ):
 
             if not formName in startupForms:
                 startupForms.append( formName )
+                debugMsg( "Found STARTUP form '" + formName + "'" )
             continue
 
         if line.upper().startswith( 'INCLUDE' ):
@@ -188,6 +189,7 @@ def applySingleLayout( path, startupForms, geometry ):
 
             geometry[ formName ] = [ path, parts[0], parts[1],
                                            parts[2], parts[3] ]
+            debugMsg( "Found GEOMETRY for '" + formName + "'" )
             continue
 
         raise Exception( "Unexpected line '" + line + "' in " + path )
@@ -200,8 +202,107 @@ def applySkin( path, application ):
     """ Searches for the skin files, processes them and applies them to the
         forms """
 
+    if not os.path.exists( path ) or not os.path.isdir( path ):
+        raise Exception( "applySkin() expects a path. The '" + \
+                         path + "' does not exist or is not a directory" )
+    if not path.endswith( '/' ):
+        path += '/'
 
-    pass
+    cssFiles = []
+    buildCSSFilesList( path, cssFiles )
+
+    # The Application.css file must be applied first
+    for fileName in cssFiles:
+        if os.path.basename( fileName ) == 'Application.css':
+            # Apply the application CSS
+            content = getCSSContent( fileName ).strip()
+            if len( content ) != 0:
+                application.setStyleSheet( content )
+                debugMsg( "Setting APPLICATION level CSS" )
+                break
+
+    # Apply all the other CSS files
+    for fullFileName in cssFiles:
+        fileName = os.path.basename( fullFileName )
+        if fileName == 'Application.css':
+            continue
+
+        if not kioskForms.has_key( fileName ):
+            message = "WARNING. Style sheet file " + fullFileName + \
+                      " is skipped because the '" + fileName + "'" \
+                      " form is not registered"
+            debugMsg( message )
+            writeToLog( message )
+            continue
+
+        content = getCSSContent( fullFileName ).strip()
+        if len( content ) != 0:
+            kioskForms[fileName].setStyleSheet( content )
+            debugMsg( "Setting CSS for '" + fileName + "' form" )
+
+    return
+
+
+def getCSSContent( fileName ):
+    """ Returns the css file content with resolved INCLUDEs and
+        without remarks """
+
+    content = []
+    parseSingleCSS( fileName, content )
+    return "".join( content )
+
+
+def parseSingleCSS( path, content ):
+    """ Recursive function to get a single CSS content
+        with removed comment lines and resolved INCLUDEs """
+
+    f = open( path )
+    for line in f:
+        if line.startswith( '#' ):
+            continue
+        if line.strip().upper().startswith( 'INCLUDE' ):
+            parts = line.strip().split()
+            if len( parts ) != 2:
+                raise Exception( "Unexpected line format: '" + line + \
+                                 "' in file '" + path + "'" )
+
+            fileName = parts[1].strip()
+            if fileName.startswith( '/' ):
+                # absolute path
+                if not os.path.exists( fileName ):
+                    raise Exception( "INCLUDE file '" + fileName + "' in '" + \
+                                     path + "' has not been found" )
+                parseSingleCSS( fileName, content )
+                continue
+
+            # relative path
+            includedFileName = os.path.dirname( path ) + '/' + fileName
+            includedFileName = os.path.normpath( includedFileName )
+            if not os.path.exists( includedFileName ):
+                raise Exception( "INCLUDE file '" + fileName + "' (" + \
+                                 includedFileName + ") in '" + path + \
+                                 "' has not been found" )
+            parseSingleCSS( includedFileName, content )
+            continue
+        # Some line
+        if len( line.strip() ) > 0:
+            content.append( line )
+
+    f.close()
+    return
+
+
+def buildCSSFilesList( path, cssFiles ):
+    """ builds a list of the .css files to be processed """
+
+    for item in os.listdir( path ):
+        if os.path.isdir( path + item ):
+            buildCSSFilesList( path + item + '/', cssFiles )
+            continue
+        if item.endswith( '.css' ):
+            cssFiles.append( path + item )
+            continue
+    return
 
 
 def showForm( formName ):
@@ -211,6 +312,7 @@ def showForm( formName ):
         raise Exception( "Try to show not registered form '" + formName + "'" )
 
     kioskForms[ formName ].show()
+    debugMsg( "Showing form '" + formName + "'" )
     return
 
 
@@ -222,6 +324,7 @@ def setFormArguments( formName, arguments ):
                          formName + "'" )
 
     kioskForms[ formName ].setArguments( arguments )
+    debugMsg( "Setting arguments for '" + formName + "' form" )
     return
 
 

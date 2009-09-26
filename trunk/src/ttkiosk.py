@@ -84,14 +84,14 @@ def ttkioskMain():
 
     # Build a list of forms, apply layout, apply CSS
     ui.buildFormsList( formsPath )
-    startupForms = ui.applyLayout( formsPath + 'layout.ini' )
+    globalData.startupForms = ui.applyLayout( formsPath + 'layout.ini' )
     ui.applySkin( settings.pathSkin, ttkioskApp )
 
-    if len( startupForms ) == 0:
+    if len( globalData.startupForms ) == 0:
         raise Exception( "No startup forms found. Exiting." )
 
     # Show startup forms; the startup forms may not have arguments
-    for formName in startupForms:
+    for formName in globalData.startupForms:
         ui.showForm( formName )
 
     # Run the application main cycle

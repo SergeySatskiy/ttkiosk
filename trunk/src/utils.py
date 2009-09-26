@@ -140,6 +140,7 @@ class GlobalData( object ):
             self.isAdmin = False
             self.screenWidth = 0
             self.screenHeight = 0
+            self.startupForms = []
             return
 
     def __init__( self ):
