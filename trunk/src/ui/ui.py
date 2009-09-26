@@ -259,7 +259,7 @@ def parseSingleCSS( path, content ):
 
     f = open( path )
     for line in f:
-        if line.startswith( '#' ):
+        if line.strip().startswith( '//' ):
             continue
         if line.strip().upper().startswith( 'INCLUDE' ):
             parts = line.strip().split()
