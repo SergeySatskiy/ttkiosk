@@ -227,9 +227,10 @@ def applySkin( path, application ):
         if fileName == 'Application.css':
             continue
 
-        if not kioskForms.has_key( fileName ):
+        formName = fileName.replace( ".css", "" )
+        if not kioskForms.has_key( formName ):
             message = "WARNING. Style sheet file " + fullFileName + \
-                      " is skipped because the '" + fileName + "'" \
+                      " is skipped because the '" + formName + "'" \
                       " form is not registered"
             debugMsg( message )
             writeToLog( message )
@@ -237,8 +238,8 @@ def applySkin( path, application ):
 
         content = getCSSContent( fullFileName ).strip()
         if len( content ) != 0:
-            kioskForms[fileName].setStyleSheet( content )
-            debugMsg( "Setting CSS for '" + fileName + "' form" )
+            kioskForms[formName].setStyleSheet( content )
+            debugMsg( "Setting CSS for '" + formName + "' form" )
 
     return
 
@@ -295,12 +296,14 @@ def parseSingleCSS( path, content ):
 def buildCSSFilesList( path, cssFiles ):
     """ builds a list of the .css files to be processed """
 
+    debugMsg( "buildCSSFilesList(): processing " + path )
     for item in os.listdir( path ):
         if os.path.isdir( path + item ):
             buildCSSFilesList( path + item + '/', cssFiles )
             continue
         if item.endswith( '.css' ):
             cssFiles.append( path + item )
+            debugMsg( "Found CSS: " + path + item )
             continue
     return
 
