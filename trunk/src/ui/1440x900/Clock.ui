@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ClockBar</class>
- <widget class="QWidget" name="ClockBar">
+ <class>Clock</class>
+ <widget class="QWidget" name="Clock">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -116,7 +116,7 @@
       </property>
       <property name="font">
        <font>
-        <family>DejaVu Sans Mono</family>
+        <family>DejaVu Sans</family>
         <pointsize>16</pointsize>
        </font>
       </property>
