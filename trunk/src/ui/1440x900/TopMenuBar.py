@@ -71,6 +71,15 @@ class Ui_TopMenuBar(ui.FormBaseClass):
 class TopMenuBar(QtGui.QWidget, Ui_TopMenuBar):
     def __init__(self, parent=None, f=QtCore.Qt.WindowFlags()):
         QtGui.QWidget.__init__(self, parent, f)
+        ui.FormBaseClass.__init__(self)
 
         self.setupUi(self)
+
+
+    def setLayoutGeometry( self, width, height ):
+        """ updates the whole form layout size """
+
+        self.gridLayoutWidget.setGeometry( QtCore.QRect( 0, 0, width, height ) )
+        return
+
 

@@ -25,6 +25,7 @@
 
 from PyQt4 import QtCore, QtGui
 import ui, time
+from utils import debugMsg
 
 
 class Ui_ClockBar(ui.FormBaseClass):
@@ -32,7 +33,7 @@ class Ui_ClockBar(ui.FormBaseClass):
         ClockBar.setObjectName("ClockBar")
         ClockBar.resize(246, 146)
         self.gridLayoutWidget = QtGui.QWidget(ClockBar)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 201, 105))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 241, 131))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setObjectName("gridLayout")
@@ -45,6 +46,11 @@ class Ui_ClockBar(ui.FormBaseClass):
         spacerItem3 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem3, 1, 2, 1, 1)
         self.timeLabel = QtGui.QLabel(self.gridLayoutWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.timeLabel.sizePolicy().hasHeightForWidth())
+        self.timeLabel.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Monospace")
         font.setPointSize(32)
@@ -54,6 +60,11 @@ class Ui_ClockBar(ui.FormBaseClass):
         self.timeLabel.setObjectName("timeLabel")
         self.gridLayout.addWidget(self.timeLabel, 1, 1, 1, 1)
         self.dateLabel = QtGui.QLabel(self.gridLayoutWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.dateLabel.sizePolicy().hasHeightForWidth())
+        self.dateLabel.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("DejaVu Sans Mono")
         font.setPointSize(16)
@@ -67,6 +78,7 @@ class Ui_ClockBar(ui.FormBaseClass):
         self.retranslateUi(ClockBar)
         QtCore.QMetaObject.connectSlotsByName(ClockBar)
 
+
     def retranslateUi(self, ClockBar):
         ClockBar.setWindowTitle(QtGui.QApplication.translate("ClockBar", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.timeLabel.setText(QtGui.QApplication.translate("ClockBar", "12:59:59", None, QtGui.QApplication.UnicodeUTF8))
@@ -76,6 +88,7 @@ class Ui_ClockBar(ui.FormBaseClass):
 class ClockBar(QtGui.QWidget, Ui_ClockBar):
     def __init__(self, parent=None, f=QtCore.Qt.WindowFlags()):
         QtGui.QWidget.__init__(self, parent, f)
+        ui.FormBaseClass.__init__(self)
 
         self.setupUi(self)
         self.displayedDate = ""
@@ -84,6 +97,14 @@ class ClockBar(QtGui.QWidget, Ui_ClockBar):
         self.update()
         self.dateTimer = QtCore.QBasicTimer()
         self.dateTimer.start( 1000, self )
+
+
+    def setLayoutGeometry( self, width, height ):
+        """ updates the whole form layout size """
+
+        self.gridLayoutWidget.setGeometry( QtCore.QRect( 0, 0, width, height ) )
+        return
+
 
     def update( self ):
         """ Updates date and time labels if required """
@@ -102,6 +123,8 @@ class ClockBar(QtGui.QWidget, Ui_ClockBar):
 
 
     def timerEvent( self, event ):
+        """ Updates the labels if it is the expected timer """
+
         if event.timerId() == self.dateTimer.timerId():
             self.update()
         return

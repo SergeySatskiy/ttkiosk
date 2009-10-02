@@ -66,6 +66,15 @@ class Ui_StartScreen(ui.FormBaseClass):
 class StartScreen(QtGui.QWidget, Ui_StartScreen):
     def __init__(self, parent=None, f=QtCore.Qt.WindowFlags()):
         QtGui.QWidget.__init__(self, parent, f)
+        ui.FormBaseClass.__init__(self)
 
         self.setupUi(self)
+
+
+    def setLayoutGeometry( self, width, height ):
+        """ updates the whole form layout size """
+
+        # self.verticalLayoutWidget.setGeometry( QtCore.QRect( 0, 0, width, height ) )
+        return
+
 
