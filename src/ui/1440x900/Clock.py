@@ -28,11 +28,11 @@ import ui, time
 from utils import debugMsg
 
 
-class Ui_ClockBar(ui.FormBaseClass):
-    def setupUi(self, ClockBar):
-        ClockBar.setObjectName("ClockBar")
-        ClockBar.resize(246, 146)
-        self.gridLayoutWidget = QtGui.QWidget(ClockBar)
+class Ui_Clock(ui.FormBaseClass):
+    def setupUi(self, Clock):
+        Clock.setObjectName("Clock")
+        Clock.resize(246, 146)
+        self.gridLayoutWidget = QtGui.QWidget(Clock)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 241, 131))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
@@ -66,7 +66,7 @@ class Ui_ClockBar(ui.FormBaseClass):
         sizePolicy.setHeightForWidth(self.dateLabel.sizePolicy().hasHeightForWidth())
         self.dateLabel.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setFamily("DejaVu Sans Mono")
+        font.setFamily("DejaVu Sans")
         font.setPointSize(16)
         self.dateLabel.setFont(font)
         self.dateLabel.setAlignment(QtCore.Qt.AlignCenter)
@@ -75,17 +75,17 @@ class Ui_ClockBar(ui.FormBaseClass):
         spacerItem4 = QtGui.QSpacerItem(20, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         self.gridLayout.addItem(spacerItem4, 4, 1, 1, 1)
 
-        self.retranslateUi(ClockBar)
-        QtCore.QMetaObject.connectSlotsByName(ClockBar)
+        self.retranslateUi(Clock)
+        QtCore.QMetaObject.connectSlotsByName(Clock)
 
 
-    def retranslateUi(self, ClockBar):
-        ClockBar.setWindowTitle(QtGui.QApplication.translate("ClockBar", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.timeLabel.setText(QtGui.QApplication.translate("ClockBar", "12:59:59", None, QtGui.QApplication.UnicodeUTF8))
-        self.dateLabel.setText(QtGui.QApplication.translate("ClockBar", "Jan 10, 1971", None, QtGui.QApplication.UnicodeUTF8))
+    def retranslateUi(self, Clock):
+        Clock.setWindowTitle(QtGui.QApplication.translate("Clock", "Form", None, QtGui.QApplication.UnicodeUTF8))
+        self.timeLabel.setText(QtGui.QApplication.translate("Clock", "12:59:59", None, QtGui.QApplication.UnicodeUTF8))
+        self.dateLabel.setText(QtGui.QApplication.translate("Clock", "Jan 10, 1971", None, QtGui.QApplication.UnicodeUTF8))
 
 
-class ClockBar(QtGui.QWidget, Ui_ClockBar):
+class Clock(QtGui.QWidget, Ui_Clock):
     def __init__(self, parent=None, f=QtCore.Qt.WindowFlags()):
         QtGui.QWidget.__init__(self, parent, f)
         ui.FormBaseClass.__init__(self)
@@ -109,7 +109,8 @@ class ClockBar(QtGui.QWidget, Ui_ClockBar):
     def update( self ):
         """ Updates date and time labels if required """
 
-        newTime = time.strftime( "%H:%M:%S" )
+        # newTime = time.strftime( "%H:%M:%S" )
+        newTime = time.strftime( "%H:%M" )
         if newTime != self.displayedTime:
             self.displayedTime = newTime
             self.timeLabel.setText( newTime )
