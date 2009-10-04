@@ -108,7 +108,8 @@ def exceptionHook( excType, excValue, tracebackobj ):
     print >> sys.stderr, "Unhandled exception is caught\n" + \
                          utils.getExceptionInfo()
 
-    # Display the message as a QT modal dialog box if the 
+    # Display the message as a QT modal dialog box if the application
+    # has started
 
 
     # TODO: e-mail sending is better done as asynch process because it

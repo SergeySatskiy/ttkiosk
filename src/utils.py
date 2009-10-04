@@ -34,8 +34,9 @@ from traceback import format_tb
 configFile = [ "/ttkiosk/etc/ttkiosk.ini", "/etc/ttkiosk/ttkiosk.ini",
                "~/ttkiosk.ini" ]
 
-debug = False
 
+debug = False           # Updated from ttkiosk.py
+debugWindow = None      # Updated from ui.py
 
 def debugMsg( message ):
     """ Writes a message to a debug file """
@@ -45,12 +46,16 @@ def debugMsg( message ):
 
     # Debug message file is always here
     fileName = '/var/log/ttkiosk/ttkiosk.debug'
+    message = time.ctime( time.time() ) + ' ' + message
     try:
         f = open( fileName, "a+" )
-        f.write( time.ctime( time.time() ) + ' ' + message + '\n' )
+        f.write( message + '\n' )
         f.close()
     except:
         pass
+
+    if not debugWindow is None:
+        debugWindow.appendMessage( message )
 
     return
 
@@ -74,7 +79,6 @@ def safeRun( commandArgs ):
         raise Exception( "Error in '%s' invocation: %s" % \
                          (commandArgs[0], err) )
     return processStdout
-
 
 
 def getExceptionInfo():
@@ -141,6 +145,7 @@ class GlobalData( object ):
             self.screenWidth = 0
             self.screenHeight = 0
             self.startupForms = []
+            self.application = None
             return
 
     def __init__( self ):
