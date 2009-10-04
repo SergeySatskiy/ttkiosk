@@ -26,52 +26,38 @@
 from PyQt4 import QtCore, QtGui
 import ui
 
-class Ui_TopMenuBar(ui.FormBaseClass):
-    def setupUi(self, TopMenuBar):
-        TopMenuBar.setObjectName("TopMenuBar")
-        TopMenuBar.resize(521, 100)
-        self.gridLayoutWidget = QtGui.QWidget(TopMenuBar)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 521, 94))
-        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
-        self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
-        self.gridLayout.setObjectName("gridLayout")
-        self.playersButton = QtGui.QPushButton(self.gridLayoutWidget)
-        self.playersButton.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.playersButton.setFlat(False)
-        self.playersButton.setObjectName("playersButton")
-        self.gridLayout.addWidget(self.playersButton, 1, 1, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
-        self.gridLayout.addItem(spacerItem, 0, 1, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(20, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
-        self.gridLayout.addItem(spacerItem1, 2, 1, 1, 1)
-        spacerItem2 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem2, 1, 0, 1, 1)
-        self.pushButton_2 = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_2.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.gridLayout.addWidget(self.pushButton_2, 1, 2, 1, 1)
-        self.pushButton_3 = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_3.setCursor(QtCore.Qt.BlankCursor)
-        self.pushButton_3.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.gridLayout.addWidget(self.pushButton_3, 1, 3, 1, 1)
-        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem3, 1, 4, 1, 1)
-
-        self.retranslateUi(TopMenuBar)
-        QtCore.QMetaObject.connectSlotsByName(TopMenuBar)
-
-    def retranslateUi(self, TopMenuBar):
-        TopMenuBar.setWindowTitle(QtGui.QApplication.translate("TopMenuBar", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.playersButton.setText(QtGui.QApplication.translate("TopMenuBar", "Players", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("TopMenuBar", "PushButton", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_3.setText(QtGui.QApplication.translate("TopMenuBar", "PushButton", None, QtGui.QApplication.UnicodeUTF8))
-
-
-class TopMenuBar(QtGui.QWidget, Ui_TopMenuBar):
-    def __init__(self, parent=None, f=QtCore.Qt.WindowFlags()):
-        QtGui.QWidget.__init__(self, parent, f)
+class Ui_TopBar(ui.FormBaseClass):
+    def setupUi(self, TopBar):
         ui.FormBaseClass.__init__(self)
+
+        TopBar.setObjectName("TopBar")
+        TopBar.resize(521, 100)
+        self.horizontalLayoutWidget = QtGui.QWidget(TopBar)
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 511, 80))
+        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
+        self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.topLabel = QtGui.QLabel(self.horizontalLayoutWidget)
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        font.setWeight(50)
+        font.setBold(False)
+        self.topLabel.setFont(font)
+        self.topLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.topLabel.setObjectName("topLabel")
+        self.horizontalLayout.addWidget(self.topLabel)
+
+        self.retranslateUi(TopBar)
+        QtCore.QMetaObject.connectSlotsByName(TopBar)
+
+    def retranslateUi(self, TopBar):
+        TopBar.setWindowTitle(QtGui.QApplication.translate("TopBar", "Form", None, QtGui.QApplication.UnicodeUTF8))
+        self.topLabel.setText(QtGui.QApplication.translate("TopBar", "Today\'s Event: none", None, QtGui.QApplication.UnicodeUTF8))
+
+
+class TopBar(QtGui.QWidget, Ui_TopBar):
+    def __init__(self, path, parent=None, f=QtCore.Qt.WindowFlags()):
+        QtGui.QWidget.__init__(self, parent, f)
 
         self.setupUi(self)
 
@@ -79,7 +65,7 @@ class TopMenuBar(QtGui.QWidget, Ui_TopMenuBar):
     def setLayoutGeometry( self, width, height ):
         """ updates the whole form layout size """
 
-        self.gridLayoutWidget.setGeometry( QtCore.QRect( 0, 0, width, height ) )
+        self.horizontalLayoutWidget.setGeometry( QtCore.QRect( 0, 0, width, height ) )
         return
 
 

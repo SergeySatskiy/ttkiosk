@@ -30,6 +30,8 @@ from utils import debugMsg
 
 class Ui_Clock(ui.FormBaseClass):
     def setupUi(self, Clock):
+        ui.FormBaseClass.__init__(self)
+
         Clock.setObjectName("Clock")
         Clock.resize(246, 146)
         self.gridLayoutWidget = QtGui.QWidget(Clock)
@@ -86,9 +88,8 @@ class Ui_Clock(ui.FormBaseClass):
 
 
 class Clock(QtGui.QWidget, Ui_Clock):
-    def __init__(self, parent=None, f=QtCore.Qt.WindowFlags()):
+    def __init__(self, path, parent=None, f=QtCore.Qt.WindowFlags()):
         QtGui.QWidget.__init__(self, parent, f)
-        ui.FormBaseClass.__init__(self)
 
         self.setupUi(self)
         self.displayedDate = ""

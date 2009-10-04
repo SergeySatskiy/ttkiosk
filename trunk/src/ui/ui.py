@@ -25,7 +25,8 @@ Functions that define a framework for ttkiosk forms
 """
 
 from utils import debugMsg, GlobalData, writeToLog
-import os, os.path, sys
+import os, os.path, sys, utils
+from PyQt4 import QtCore, QtGui
 
 
 # Global map FormName -> Widget instance
@@ -38,18 +39,27 @@ class FormBaseClass( object ):
 
     def __init__( self ):
         self.arguments = {}
+        return
 
     def setArguments( self, args ):
         """ Stores the passed arguments """
         self.arguments = args
+        return
 
+    def resizeLayout( self, width, height ):
+        """ Calls the derived class function (if present) 
+            to adjust layout size """
 
+        if hasattr( self, 'setLayoutGeometry' ):
+            self.setLayoutGeometry( width, height )
+        return
 
 
 def buildFormsList( path ):
     """ Populates the kioskForms map """
 
     global kioskForms
+    global debugWindow
 
     debugMsg( "buildFormsList(): processing " + path + "..." )
     if not os.path.exists( path ) or not os.path.isdir( path ):
@@ -79,7 +89,14 @@ def buildFormsList( path ):
             module = __import__( formName, globals(), locals(), ['*'] )
             formClass = getattr( module, formName )
 
-            kioskForms[ formName ] = formClass()
+            kioskForms[ formName ] = formClass( path )
+
+            # Dirty: update the utils global variable to have the messages
+            #        added to the list on the screen
+            if formName == 'DebugBar':
+                # ugly - I don't know how to update this variable from the
+                # other module another way
+                utils.debugWindow = kioskForms[ formName ]
             debugMsg( "Form '" + formName + "' has been registered." )
 
     return
@@ -95,10 +112,16 @@ def applyLayout( path ):
 
     # Apply geometry
     for formName in geometry:
-        kioskForms[formName].move( geometry[formName][1],
-                                   geometry[formName][2] )
-        kioskForms[formName].resize( geometry[formName][3],
-                                     geometry[formName][4] )
+        xPos = geometry[formName][1]
+        yPos = geometry[formName][2]
+        width = geometry[formName][3]
+        height = geometry[formName][4]
+
+        form = kioskForms[formName]
+
+        form.move( xPos, yPos )
+        form.resize( width, height )
+        form.setLayoutGeometry( width, height )
 
     return startupForms
 

@@ -2,4 +2,9 @@
 - show QT message box in the unhadled exception hook
 - getExceptionInfo() does not work at exceptionHook()
 - INCLUDE in the layout.ini has not been tested
-- replace remark symbol in the CSS files from # to //
+DONE - replace remark symbol in the CSS files from # to //
+DONE - add the debug output window
+- make the layout working properly
+- design the update functionality
+- create own application class
+- memorize application reference in the global data
