@@ -59,7 +59,6 @@ def buildFormsList( path ):
     """ Populates the kioskForms map """
 
     global kioskForms
-    global debugWindow
 
     debugMsg( "buildFormsList(): processing " + path + "..." )
     if not os.path.exists( path ) or not os.path.isdir( path ):
@@ -132,12 +131,32 @@ def applySingleLayout( path, startupForms, geometry ):
     if not os.path.exists( path ):
         raise Exception( "Layout file '" + path + "' has not been found" )
 
+    globalData = GlobalData()
+    # variables name -> value
+    variables = { "WIDTH"  : str( globalData.screenWidth ),
+                  "HEIGHT" : str( globalData.screenHeight )
+                }
+
     f = open( path )
     for line in f:
         line = line.strip()
         if len( line ) == 0:
             continue
         if line.startswith( '#' ):
+            continue
+
+        if line.upper().startswith( 'SET' ):
+            assignment = line[ len( 'SET' ) : ].strip()
+            parts = assignment.split( '=' )
+            if len( parts ) != 2:
+                raise Exception( "Unexpected line format: '" + line + \
+                                 "' in file '" + path + "'" )
+            varName = parts[0].strip()
+            if variables.has_key( varName ):
+                raise Exception( "Variable '" + varName + \
+                                 "' is defined twice in file '" + path + "'" )
+            variables[ varName ] = substAndEvaluate( parts[ 1 ].strip(), variables )
+            debugMsg( "Found variable '" + varName + "' in file '" + path + "'" )
             continue
 
         if line.upper().startswith( 'STARTUP' ):
@@ -203,12 +222,7 @@ def applySingleLayout( path, startupForms, geometry ):
 
             globalData = GlobalData()
             for index in range( 0, 4 ):
-                parts[index] = parts[index].upper()
-                parts[index] = parts[index].replace( '$WIDTH',
-                                    str( globalData.screenWidth ) )
-                parts[index] = parts[index].replace( '$HEIGHT',
-                                    str( globalData.screenHeight ) )
-                parts[index] = eval( parts[index] )
+                parts[index] = int( substAndEvaluate( parts[index], variables ) )
 
             geometry[ formName ] = [ path, parts[0], parts[1],
                                            parts[2], parts[3] ]
@@ -219,6 +233,16 @@ def applySingleLayout( path, startupForms, geometry ):
 
     f.close()
     return
+
+
+def substAndEvaluate( expression, variables ):
+    """ Substitutes variables and returns the eval() result as a string """
+
+    expression = expression.upper()
+    for var in variables.keys():
+        expression = expression.replace( '$' + var.upper(), variables[ var ] )
+    return str( eval( expression ) )
+
 
 
 def applySkin( path, application ):
@@ -331,25 +355,32 @@ def buildCSSFilesList( path, cssFiles ):
     return
 
 
-def showForm( formName ):
+def showForm( formName, left=-1, top=-1, width=-1, height=-1 ):
     """ shows the required form """
 
-    if not kioskForms.has_key( formName ):
-        raise Exception( "Try to show not registered form '" + formName + "'" )
+    theForm = findForm( formName )
 
-    kioskForms[ formName ].show()
+    if width > 0 and height > 0:
+        theForm.resize( width, height )
+        theForm.setLayoutGeometry( width, height )
+
+    theForm.show()
     debugMsg( "Showing form '" + formName + "'" )
+    return
+
+
+def hideForm( formName ):
+    """ hides the required form """
+
+    findForm( formName ).hide()
+    debugMsg( "Hiding form '" + formName + "'" )
     return
 
 
 def setFormArguments( formName, arguments ):
     """ passes arguments to the required form """
 
-    if not kioskForms.has_key( formName ):
-        raise Exception( "Try to set arguments for not registered form '" + \
-                         formName + "'" )
-
-    kioskForms[ formName ].setArguments( arguments )
+    findForm( formName ).setArguments( arguments )
     debugMsg( "Setting arguments for '" + formName + "' form" )
     return
 
