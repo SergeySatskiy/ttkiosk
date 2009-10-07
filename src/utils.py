@@ -26,7 +26,6 @@ import sys, os, time, getpass, os.path, tempfile, ConfigParser
 import socket, fcntl, struct
 
 from subprocess import Popen, PIPE
-from traceback import format_tb
 
 
 
@@ -79,43 +78,6 @@ def safeRun( commandArgs ):
         raise Exception( "Error in '%s' invocation: %s" % \
                          (commandArgs[0], err) )
     return processStdout
-
-
-def getExceptionInfo():
-    """
-    The function formats the exception and returns the string which
-    could be then printed or logged
-    """
-
-    excType, value, tback = sys.exc_info()
-    msg = str( value )
-
-    if len( msg ) == 0:
-        msg = "There is no message associated with the exception."
-    if msg.startswith( '(' ) and msg.endswith( ')' ):
-        msg = msg[1:-1]
-
-    try:
-        tbInfo = format_tb( tback )
-        tracebackInfoMsg = "Traceback information:\n" + "".join( tbInfo )
-    except:
-        tracebackInfoMsg = "No traceback information available"
-
-    return "Exception is caught. " + msg + "\n" + tracebackInfoMsg
-
-
-def getExceptionMessage():
-    """ The function returns the exception associated string """
-
-    excType, value, tback = sys.exc_info()
-    msg = str( value )
-
-    if len( msg ) == 0:
-        msg = "There is no message associated with the exception."
-    if msg.startswith( '(' ) and msg.endswith( ')' ):
-        msg = msg[1:-1]
-
-    return msg
 
 
 def getConfigFileName():
