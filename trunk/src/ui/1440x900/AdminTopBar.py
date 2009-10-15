@@ -24,8 +24,9 @@
 
 
 from PyQt4 import QtCore, QtGui
-from utils import debugMsg
-import ui
+from PyQt4.QtCore import SIGNAL, SLOT
+from utils import debugMsg, GlobalData, collectHostInfo
+import ui, utils
 
 class Ui_AdminTopBar(ui.FormBaseClass):
     def setupUi(self, AdminTopBar):
@@ -85,6 +86,10 @@ class Ui_AdminTopBar(ui.FormBaseClass):
         self.flushButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.flushButton.setObjectName("flushButton")
         self.horizontalLayout.addWidget(self.flushButton)
+        self.showHostInfoButton = QtGui.QPushButton(self.horizontalLayoutWidget)
+        self.showHostInfoButton.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.showHostInfoButton.setObjectName("showHostInfoButton")
+        self.horizontalLayout.addWidget(self.showHostInfoButton)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
 
@@ -93,11 +98,12 @@ class Ui_AdminTopBar(ui.FormBaseClass):
 
     def retranslateUi(self, AdminTopBar):
         AdminTopBar.setWindowTitle(QtGui.QApplication.translate("AdminTopBar", "AdminTopBar", None, QtGui.QApplication.UnicodeUTF8))
-        self.createEventButton.setText(QtGui.QApplication.translate("AdminTopBar", "createEventButton", None, QtGui.QApplication.UnicodeUTF8))
+        self.createEventButton.setText(QtGui.QApplication.translate("AdminTopBar", "Create New Event", None, QtGui.QApplication.UnicodeUTF8))
         self.toUserButton.setText(QtGui.QApplication.translate("AdminTopBar", "Switch to User Mode", None, QtGui.QApplication.UnicodeUTF8))
         self.shutdownButton.setText(QtGui.QApplication.translate("AdminTopBar", "Shutdown", None, QtGui.QApplication.UnicodeUTF8))
         self.restartButton.setText(QtGui.QApplication.translate("AdminTopBar", "Restart Kiosk", None, QtGui.QApplication.UnicodeUTF8))
         self.flushButton.setText(QtGui.QApplication.translate("AdminTopBar", "Flush Cache", None, QtGui.QApplication.UnicodeUTF8))
+        self.showHostInfoButton.setText(QtGui.QApplication.translate("AdminTopBar", "Show host info", None, QtGui.QApplication.UnicodeUTF8))
 
 
 class AdminTopBar(QtGui.QWidget, Ui_AdminTopBar):
@@ -105,10 +111,77 @@ class AdminTopBar(QtGui.QWidget, Ui_AdminTopBar):
         QtGui.QWidget.__init__(self, parent, f)
 
         self.setupUi(self)
+        self.makeConnections()
+        return
+
+
+    def makeConnections( self ):
+        """ A collection of SIGNAL - SLOT connections """
+
+        globalData = GlobalData()
+        self.connect( self.restartButton, SIGNAL("clicked()"),
+                      globalData.application, SLOT("quit()") )
+        self.connect( self.showHostInfoButton, SIGNAL("clicked()"),
+                      self.showHostInfoCkicked )
+        self.connect( self.createEventButton, SIGNAL("clicked()"),
+                      self.createEventButtonClicked )
+        self.connect( self.toUserButton, SIGNAL("clicked()"),
+                      self.toUserButtonClicked )
+        self.connect( self.shutdownButton, SIGNAL("clicked()"),
+                      self.shutdownButtonClicked )
+        self.connect( self.flushButton, SIGNAL("clicked()"),
+                      self.flushButtonClicked )
+        return
+
 
     def setLayoutGeometry( self, width, height ):
         """ updates the whole form layout size """
 
-        self.horizontalLayoutWidget.setGeometry( QtCore.QRect( 0, 0, width, height ) )
+        self.horizontalLayoutWidget.setGeometry( QtCore.QRect( 0, 0,
+                                                               width, height ) )
         return
+
+
+    def showHostInfoCkicked( self ):
+        """ processing click() on the Show host info button """
+
+        QtGui.QMessageBox.information( None, "Host Information",
+                                       "<html>" \
+                                       "<pre>" + collectHostInfo() + "</pre>" \
+                                       "</html>" )
+        return
+
+
+    def createEventButtonClicked( self ):
+        """ processing click() on the Create event button """
+
+        QtGui.QMessageBox.information( None, "Not implemented yet",
+                                       "Not implemented yet" )
+        return
+
+
+    def toUserButtonClicked( self ):
+        """ processing click() on the To User Mode button """
+
+        QtGui.QMessageBox.information( None, "Not implemented yet",
+                                       "Not implemented yet" )
+        return
+
+
+    def shutdownButtonClicked( self ):
+        """ processing click() on the Shutdown button """
+
+        QtGui.QMessageBox.information( None, "Not implemented yet",
+                                       "Not implemented yet" )
+        return
+
+
+    def flushButtonClicked( self ):
+        """ processing click() on the Flush button """
+
+        QtGui.QMessageBox.information( None, "Not implemented yet",
+                                       "Not implemented yet" )
+        return
+
+
 

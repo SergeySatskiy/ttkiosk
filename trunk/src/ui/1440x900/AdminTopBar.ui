@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
+    <width>681</width>
     <height>212</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>561</width>
+     <width>661</width>
      <height>80</height>
     </rect>
    </property>
@@ -48,7 +48,7 @@
        <enum>Qt::NoFocus</enum>
       </property>
       <property name="text">
-       <string>createEventButton</string>
+       <string>Create New Event</string>
       </property>
      </widget>
     </item>
@@ -113,6 +113,16 @@
       </property>
       <property name="text">
        <string>Flush Cache</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="showHostInfoButton">
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>Show host info</string>
       </property>
      </widget>
     </item>
