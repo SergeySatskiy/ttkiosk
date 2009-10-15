@@ -32,6 +32,8 @@ from PyQt4 import QtCore, QtGui
 # Global map FormName -> Widget instance
 kioskForms = {}
 
+# Global stack of screen states
+formsStack = []
 
 
 class FormBaseClass( object ):
@@ -136,6 +138,10 @@ def applySingleLayout( path, startupForms, geometry ):
     variables = { "WIDTH"  : str( globalData.screenWidth ),
                   "HEIGHT" : str( globalData.screenHeight )
                 }
+    if utils.debug:
+        variables[ "DEBUG" ] = "1"
+    else:
+        variables[ "DEBUG" ] = "0"
 
     f = open( path )
     for line in f:
@@ -155,8 +161,10 @@ def applySingleLayout( path, startupForms, geometry ):
             if variables.has_key( varName ):
                 raise Exception( "Variable '" + varName + \
                                  "' is defined twice in file '" + path + "'" )
-            variables[ varName ] = substAndEvaluate( parts[ 1 ].strip(), variables )
-            debugMsg( "Found variable '" + varName + "' in file '" + path + "'" )
+            variables[ varName ] = substAndEvaluate( parts[ 1 ].strip(),
+                                                     variables )
+            debugMsg( "Found variable '" + varName + \
+                      "' in file '" + path + "'" )
             continue
 
         if line.upper().startswith( 'STARTUP' ):
@@ -222,7 +230,8 @@ def applySingleLayout( path, startupForms, geometry ):
 
             globalData = GlobalData()
             for index in range( 0, 4 ):
-                parts[index] = int( substAndEvaluate( parts[index], variables ) )
+                parts[index] = int( substAndEvaluate( parts[index],
+                                                      variables ) )
 
             geometry[ formName ] = [ path, parts[0], parts[1],
                                            parts[2], parts[3] ]
@@ -392,4 +401,61 @@ def findForm( formName ):
         raise Exception( "Form '" + formName + "' is not registered." )
 
     return kioskForms[ formName ]
+
+
+def navigateHome():
+    """ return back to the home screen """
+
+    global formsStack
+    globalData = GlobalData()
+
+    formsStack = []
+    for key in kioskForms.keys():
+        if key == 'DebugBar':
+            continue
+        theForm = kioskForms[ key ]
+        if not key in GlobalData.startupForms:
+            theForm.hide()
+        else:
+            theForm.show()
+    return
+
+
+def saveScreenState():
+    """ Memorises all the forms state """
+
+    global formsStack
+    forms = []
+    for key in kioskForms.keys():
+        if key == 'DebugBar':
+            continue
+        theForm = kioskForms[ key ]
+        if theForm.isVisible():
+            forms.append( theForm )
+    formsStack.append( forms )
+    return
+
+
+def restoreScreenState():
+    """ Restores the saved forms state """
+
+    global formsStack
+
+    stackLength = len( formsStack )
+    if stackLength == 0:
+        raise Exception( "Cannot restore screen state: " \
+                         "there are no saved states" )
+
+    forms = formsStack[ stackLength - 1 ]
+    formsStack = formsStack[ : -1 ]
+
+    for key in kioskForms.keys():
+        if key == 'DebugBar':
+            continue
+        theForm = kioskForms[ key ]
+        if theForm in forms:
+            theForm.show()
+        else:
+            theForm.hide()
+    return
 
