@@ -108,6 +108,7 @@ class GlobalData( object ):
             self.screenHeight = 0
             self.startupForms = []
             self.application = None
+            self.uuid = ""
             return
 
     def __init__( self ):
@@ -197,6 +198,12 @@ class Settings( object ):
                                  "' skin directory (" + \
                                  self.pathSkin + ") has not been found" )
             debugMsg( "skin path: " + self.pathSkin )
+
+            # Get notification port
+            self.notificationPort = int( get_string( config,
+                                                     "general",
+                                                     "notificationPort" ) )
+            debugMsg( "notification port: " + str( self.notificationPort ) )
 
             # Check timeout
             self.timeoutIdle = int( get_string( config, "timeout", "idle" ) )
