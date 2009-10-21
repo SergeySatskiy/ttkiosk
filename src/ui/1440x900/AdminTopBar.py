@@ -163,8 +163,9 @@ class AdminTopBar(QtGui.QWidget, Ui_AdminTopBar):
     def toUserButtonClicked( self ):
         """ processing click() on the To User Mode button """
 
-        QtGui.QMessageBox.information( None, "Not implemented yet",
-                                       "Not implemented yet" )
+        GlobalData().isAdmin = False
+        ui.hideForm( 'AdminTopBar' )
+        ui.showForm( 'TopBar' )
         return
 
 
@@ -178,6 +179,10 @@ class AdminTopBar(QtGui.QWidget, Ui_AdminTopBar):
 
     def flushButtonClicked( self ):
         """ processing click() on the Flush button """
+
+        debugMsg( "Sending a test notification" )
+        GlobalData().application.sendNotification( "something" )
+        debugMsg( "Sent" )
 
         QtGui.QMessageBox.information( None, "Not implemented yet",
                                        "Not implemented yet" )

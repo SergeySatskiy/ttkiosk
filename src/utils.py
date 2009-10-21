@@ -205,6 +205,10 @@ class Settings( object ):
                                                      "notificationPort" ) )
             debugMsg( "notification port: " + str( self.notificationPort ) )
 
+            self.adminPassword = get_string( config, "general",
+                                             "adminPassword" )
+            debugMsg( "Administrator password: " + self.adminPassword )
+
             # Check timeout
             self.timeoutIdle = int( get_string( config, "timeout", "idle" ) )
             if self.timeoutIdle < 0:
