@@ -414,7 +414,7 @@ def navigateHome():
         if key == 'DebugBar':
             continue
         theForm = kioskForms[ key ]
-        if not key in GlobalData.startupForms:
+        if not key in globalData.startupForms:
             theForm.hide()
         else:
             theForm.show()

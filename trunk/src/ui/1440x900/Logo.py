@@ -25,7 +25,24 @@
 
 from PyQt4 import QtCore, QtGui
 import ui
-from utils import debugMsg
+from utils import debugMsg, GlobalData
+
+
+class ClickableLogoLabel( QtGui.QLabel ):
+    """ The class is only for the club logo label """
+
+    def __init__( self, firstLabel ):
+        QtGui.QLabel.__init__( self, firstLabel )
+
+    def mouseReleaseEvent( self, event ):
+        """ go home """
+
+        ui.navigateHome()
+        if GlobalData().isAdmin:
+            ui.hideForm( 'TopBar' )
+            ui.showForm( 'AdminTopBar' )
+        return
+
 
 class Ui_Logo(ui.FormBaseClass):
     def setupUi(self, Logo, path):
@@ -38,7 +55,8 @@ class Ui_Logo(ui.FormBaseClass):
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setObjectName("gridLayout")
-        self.logoPicture = QtGui.QLabel(self.gridLayoutWidget)
+        #self.logoPicture = QtGui.QLabel(self.gridLayoutWidget)
+        self.logoPicture = ClickableLogoLabel(self.gridLayoutWidget)
         self.logoPicture.setPixmap(QtGui.QPixmap(path + "logo.gif"))
         self.logoPicture.setObjectName("logoPicture")
         self.gridLayout.addWidget(self.logoPicture, 1, 1, 1, 1)

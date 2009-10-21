@@ -28,13 +28,15 @@ It performs necessery initialization and starts the Qt main loop.
 
 __version__ = "0.0.1"
 
-import utils, mail, sys, os.path, traceback
+import utils, mail, sys, os.path, traceback, app
 from PyQt4 import QtGui
 from optparse import OptionParser
 
 # Make it possible to import from the ./ui directory
 sys.path.append( os.path.dirname( os.path.abspath( sys.argv[0] ) ) + '/ui/' )
+sys.path.append( os.path.dirname( os.path.abspath( sys.argv[0] ) ) + '/thirdparty/' )
 import ui
+import uuid
 
 
 def ttkioskMain():
@@ -71,12 +73,14 @@ def ttkioskMain():
     sys.excepthook = exceptionHook
 
     globalData = utils.GlobalData()
-    ttkioskApp = QtGui.QApplication( sys.argv )
+    ttkioskApp = app.ttkioskApplication( sys.argv )
     globalData.application = ttkioskApp
 
     screenSize = ttkioskApp.desktop().screenGeometry()
     globalData.screenWidth = screenSize.width()
     globalData.screenHeight = screenSize.height()
+
+    globalData.uuid = str( uuid.uuid1() )
 
     formsPath = os.path.dirname( os.path.abspath( sys.argv[0] ) ) + '/ui/' + \
                 str( screenSize.width() ) + 'x' + str( screenSize.height() ) + \

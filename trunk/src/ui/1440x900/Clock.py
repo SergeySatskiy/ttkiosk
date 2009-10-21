@@ -25,7 +25,49 @@
 
 from PyQt4 import QtCore, QtGui
 import ui, time
-from utils import debugMsg
+from utils import debugMsg, GlobalData, Settings
+
+
+
+class ClickableTimeLabel( QtGui.QLabel ):
+    """ This class is for time label only! It needs to overload the 
+        double click event. """
+
+    def __init__( self, firstLabel ):
+        QtGui.QLabel.__init__( self, firstLabel )
+
+    def mouseDoubleClickEvent( self, event ):
+        """ Ask password and move to the admin mode """
+
+        globalData = GlobalData()
+
+        keyboard = ui.findForm( 'DigitKeyboard' )
+        if keyboard.isModal():
+            debugMsg( "MODAL" )
+        else:
+            debugMsg( "NON MODAL" )
+
+        #keyboard.setWindowModality( 2 )     # Application modal
+        #ui.showForm( 'DigitKeyboard', globalData.screenWidth - keyboard.width() - 10,
+        #                              120, keyboard.width(), keyboard.height() )
+
+        keyboard.exec_()
+
+        if keyboard.cancelled:
+            return
+
+        debugMsg( "User input: " + keyboard.userInput )
+        debugMsg( "Admin password: " + Settings().adminPassword )
+
+        if keyboard.userInput != Settings().adminPassword:
+            return
+
+
+        ui.hideForm( 'TopBar' )
+        ui.showForm( 'AdminTopBar' )
+
+        globalData.isAdmin = True
+        return
 
 
 class Ui_Clock(ui.FormBaseClass):
@@ -47,7 +89,8 @@ class Ui_Clock(ui.FormBaseClass):
         self.gridLayout.addItem(spacerItem2, 1, 0, 1, 1)
         spacerItem3 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem3, 1, 2, 1, 1)
-        self.timeLabel = QtGui.QLabel(self.gridLayoutWidget)
+        #self.timeLabel = QtGui.QLabel(self.gridLayoutWidget)
+        self.timeLabel = ClickableTimeLabel(self.gridLayoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
