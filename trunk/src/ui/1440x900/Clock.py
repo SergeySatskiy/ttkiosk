@@ -42,15 +42,7 @@ class ClickableTimeLabel( QtGui.QLabel ):
         globalData = GlobalData()
 
         keyboard = ui.findForm( 'DigitKeyboard' )
-        if keyboard.isModal():
-            debugMsg( "MODAL" )
-        else:
-            debugMsg( "NON MODAL" )
-
-        #keyboard.setWindowModality( 2 )     # Application modal
-        #ui.showForm( 'DigitKeyboard', globalData.screenWidth - keyboard.width() - 10,
-        #                              120, keyboard.width(), keyboard.height() )
-
+        keyboard.hideInput = True
         keyboard.exec_()
 
         if keyboard.cancelled:

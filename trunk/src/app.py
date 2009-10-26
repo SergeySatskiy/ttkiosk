@@ -22,9 +22,10 @@
 
 """ definition of the ttkiosk QT based application class """
 
-import urllib, urlparse, utils, socket
-from PyQt4 import QtGui, QtNetwork
-from PyQt4.QtCore import SIGNAL
+import urllib, urlparse, utils, socket, os
+from PyQt4 import QtGui, QtNetwork, QtCore
+from PyQt4.QtCore import SIGNAL, QTimer
+from threading import Thread
 
 
 def prepareNotification( what, values ):
@@ -46,6 +47,22 @@ def parseNotification( notificationString ):
     return dict( urlparse.parse_qsl( notificationString ) )
 
 
+
+class PingAgent( Thread ):
+    """ Checks the connection status """
+    def __init__( self, application, host ):
+        Thread.__init__( self )
+        self.application = application
+        self.host = host
+        return
+
+    def run( self ):
+        retCode = os.system( 'ping -c 1 -W 4 ' + self.host + " > /dev/null" )
+        self.application.onConnectionStatus( self.host, retCode == 0 )
+
+        # Hack - make the thread restartable
+        Thread.__init__( self )
+        return
 
 
 class ttkioskApplication( QtGui.QApplication ):
@@ -69,9 +86,27 @@ class ttkioskApplication( QtGui.QApplication ):
                       SIGNAL( "readyRead()" ),
                       self.onNotification )
 
+        # Prepare the ping agent
+        self.pingAgent = PingAgent( self, settings.dbHost )
+
+        # Run the timer which checks the connection periodically
+        self.connectionTimer = QTimer( self )
+        self.connect( self.connectionTimer, SIGNAL( "timeout()" ),
+                      self.checkConnection )
+        # Check the connection every 16 seconds if the connection is lost
+        # or every 5 minutes if the connection is here
+        self.connectionTimer.start( 16 * 1000 )
+
+        # Check it at the very beginning
+        QtCore.QTimer.singleShot( 1000, self.checkConnection )
 
     def __del__( self ):
+        self.connectionTimer.stop()
         self.socketTo.close()
+        try:
+            self.pingAgent.join()
+        except:
+            pass
         return
 
 
@@ -105,5 +140,36 @@ class ttkioskApplication( QtGui.QApplication ):
             # emit a signal
             self.emit( SIGNAL( "peerNotification" ), values )
 
+        return
+
+    def onConnectionStatus( self, host, isAlive ):
+        """ Called by ping agent.
+            isAlive shows the current connection status """
+
+        if isAlive == utils.GlobalData().isConnected:
+            return
+
+        # The status has been changed
+        self.connectionTimer.stop()
+        utils.GlobalData().isConnected = isAlive
+        if isAlive:
+            # Connection restored
+            # Check the connection every 5 minutes
+            self.connectionTimer.start( 5 * 60 * 1000 )
+            utils.debugMsg( "Connection restored. Switch interval to 5 minutes." )
+        else:
+            # Connection lost
+            # Check the connection every 16 seconds
+            self.connectionTimer.start( 16 * 1000 )
+            utils.debugMsg( "Connection lost. Switch interval to 10 seconds." )
+
+        self.emit( SIGNAL( "connectionStatus" ), isAlive )
+        return
+
+    def checkConnection( self ):
+        """ Checks the connection to the web host and generates 
+            a signal if the state has been changed """
+
+        self.pingAgent.start()
         return
 

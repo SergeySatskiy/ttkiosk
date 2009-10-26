@@ -33,6 +33,7 @@ class Ui_DigitKeyboard(ui.FormBaseClass):
     def setupUi(self, DigitKeyboard, path):
         ui.FormBaseClass.__init__(self)
 
+        DigitKeyboard.setWindowModality(QtCore.Qt.ApplicationModal)
         DigitKeyboard.setObjectName("DigitKeyboard")
         DigitKeyboard.resize(190, 367)
         self.userInputLabel = QtGui.QLabel(DigitKeyboard)
@@ -158,22 +159,14 @@ class Ui_DigitKeyboard(ui.FormBaseClass):
         self.button0.setText(QtGui.QApplication.translate("DigitKeyboard", "0", None, QtGui.QApplication.UnicodeUTF8))
 
 
-#class DigitKeyboard(QtGui.QWidget, Ui_DigitKeyboard):
 class DigitKeyboard(QtGui.QDialog, Ui_DigitKeyboard):
     def __init__(self, path, parent=None, f=QtCore.Qt.WindowFlags()):
-        #QtGui.QWidget.__init__(self, parent, f)
-        #QtGui.QDialog.__init__(self, parent, f)
-        QtGui.QDialog.__init__(self, parent, f | QtCore.Qt.WindowStaysOnTopHint)
-        #self.setModal( True )
-        #self.setWindowModality( QtCore.Qt.ApplicationModal )
+        QtGui.QDialog.__init__(self, parent, f)
 
         self.setupUi(self, path)
 
         self.hideInput = True
-        self.userInput = ""
-        self.userInputLabel.setText( "" )
-        self.cancelled = False
-
+        self.showEvent( None )
         self.makeConnections()
         return
 
