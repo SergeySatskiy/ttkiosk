@@ -24,6 +24,7 @@
 
 
 from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import SIGNAL
 import ui
 from utils import debugMsg, GlobalData
 
@@ -57,7 +58,9 @@ class Ui_Logo(ui.FormBaseClass):
         self.gridLayout.setObjectName("gridLayout")
         #self.logoPicture = QtGui.QLabel(self.gridLayoutWidget)
         self.logoPicture = ClickableLogoLabel(self.gridLayoutWidget)
-        self.logoPicture.setPixmap(QtGui.QPixmap(path + "logo.gif"))
+
+        self.updatePicture( path )
+
         self.logoPicture.setObjectName("logoPicture")
         self.gridLayout.addWidget(self.logoPicture, 1, 1, 1, 1)
         spacerItem = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
@@ -75,17 +78,36 @@ class Ui_Logo(ui.FormBaseClass):
     def retranslateUi(self, Logo):
         Logo.setWindowTitle(QtGui.QApplication.translate("Logo", "Form", None, QtGui.QApplication.UnicodeUTF8))
 
+    def updatePicture( self, path ):
+        pictureName = ""
+        if GlobalData().isConnected:
+            pictureName = path + 'logo.gif'
+        else:
+            pictureName = path + 'warning.png'
+        self.logoPicture.setPixmap(QtGui.QPixmap(pictureName))
+        return
+
 
 class Logo(QtGui.QWidget, Ui_Logo):
     def __init__(self, path, parent=None, f=QtCore.Qt.WindowFlags()):
         QtGui.QWidget.__init__(self, parent, f)
 
+        self.path = path
         self.setupUi(self, path)
+
+        self.connect( GlobalData().application,
+                      SIGNAL( "connectionStatus" ),
+                      self.onConnectionChanged )
+        return
 
     def setLayoutGeometry( self, width, height ):
         """ updates the whole form layout size """
 
         self.gridLayoutWidget.setGeometry( QtCore.QRect( 0, 0, width, height ) )
+        return
+
+    def onConnectionChanged( self ):
+        self.updatePicture( self.path )
         return
 
 

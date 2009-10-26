@@ -109,6 +109,7 @@ class GlobalData( object ):
             self.startupForms = []
             self.application = None
             self.uuid = ""
+            self.isConnected = False
             return
 
     def __init__( self ):
@@ -198,6 +199,10 @@ class Settings( object ):
                                  "' skin directory (" + \
                                  self.pathSkin + ") has not been found" )
             debugMsg( "skin path: " + self.pathSkin )
+
+            # Read DB section
+            self.dbHost = get_string( config, "db", "host" )
+            debugMsg( "DB host: " + self.dbHost )
 
             # Get notification port
             self.notificationPort = int( get_string( config,

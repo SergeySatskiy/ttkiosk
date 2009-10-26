@@ -4,7 +4,9 @@ DONE - getExceptionInfo() does not work at exceptionHook()
 - INCLUDE in the layout.ini has not been tested
 DONE - replace remark symbol in the CSS files from # to //
 DONE - add the debug output window
-- make the layout working properly
-- design the update functionality
-- create own application class
+DONE - make the layout working properly
+DONE - design the update functionality
+DONE - create own application class
 DONE - memorize application reference in the global data
+DONE - Startup check of the connection status
+DONE - Timer in the Clock form
