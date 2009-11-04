@@ -214,6 +214,9 @@ class Settings( object ):
                                              "adminPassword" )
             debugMsg( "Administrator password: " + self.adminPassword )
 
+            self.venue = get_string( config, "general", "venue" )
+            debugMsg( "Venue: " + self.venue )
+
             # Check timeout
             self.timeoutIdle = int( get_string( config, "timeout", "idle" ) )
             if self.timeoutIdle < 0:
