@@ -43,6 +43,7 @@ class ClickableTimeLabel( QtGui.QLabel ):
 
         keyboard = ui.findForm( 'DigitKeyboard' )
         keyboard.hideInput = True
+        keyboard.raise_()
         keyboard.exec_()
 
         if keyboard.cancelled:
