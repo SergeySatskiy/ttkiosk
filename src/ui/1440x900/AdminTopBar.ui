@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
-    <height>212</height>
+    <width>795</width>
+    <height>206</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>661</width>
+     <width>753</width>
      <height>80</height>
     </rect>
    </property>
@@ -39,10 +39,23 @@
     <item>
      <widget class="QPushButton" name="createEventButton">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
@@ -55,10 +68,23 @@
     <item>
      <widget class="QPushButton" name="toUserButton">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
@@ -71,10 +97,23 @@
     <item>
      <widget class="QPushButton" name="shutdownButton">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
@@ -87,10 +126,23 @@
     <item>
      <widget class="QPushButton" name="restartButton">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
@@ -103,10 +155,23 @@
     <item>
      <widget class="QPushButton" name="flushButton">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
@@ -118,6 +183,25 @@
     </item>
     <item>
      <widget class="QPushButton" name="showHostInfoButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
       </property>
