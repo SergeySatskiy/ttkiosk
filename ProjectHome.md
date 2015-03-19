@@ -1,0 +1,1 @@
+ttkiosk holds players profiles, keeps track of matches, helps to organise routine tournaments and provides players statistics.
